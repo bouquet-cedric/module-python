@@ -1,0 +1,18 @@
+. résoudre 3x² + 2x - 5 = 0
+show "résoudre 3x² + 2x - 5 = 0"
+
+let x = 3
+let y = 2
+let z = -5
+
+let delta = y ** 2 - 4 * x * z
+let rd = sqrt ( delta )
+let x1 = ( - y - rd ) / ( 2 * x ) 
+let x2 = ( - y + rd ) / ( 2 * x ) 
+
+show "delta = " + delta
+show "x1 = " + x1
+show "x2 = " + x2
+
+. x1 = (-2 - 8) / 6 = -10 / 6 = -5/3
+com x2 = (-2 + 8) / 6 = 1
