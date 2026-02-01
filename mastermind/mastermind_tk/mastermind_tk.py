@@ -151,7 +151,7 @@ def askAllNumbers(event):
             if tab[i] not in UNAUTHORIZED_CHAR:
                 btns[i].config(text=str(tab[i]))
         check()
-    window.after(200, askAllNumbers)
+        window.after(1000, lambda : askAllNumbers(None))
 
 
 LIMIT_HISTORIC = 40
