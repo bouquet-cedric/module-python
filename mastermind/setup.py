@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name='mastermind_tk',
-    version='1.0.8',
-    requires=["tkinter", "PIL"],
+    version='1.1.0',
+    requires=["tkinter", "PIL", "pillow"],
     packages=find_packages(),
     entry_points={
         'console_scripts': [

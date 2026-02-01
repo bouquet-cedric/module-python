@@ -21,8 +21,7 @@ from PIL import Image, ImageTk
 
 def asker(number):
     global btns
-    answer = simpledialog.askstring(
-        "Saisie", "Entrez un caractère", parent=window)
+    answer = simpledialog.askstring("Saisie", "Entrez un caractère", parent=window)
     if answer not in UNAUTHORIZED_CHAR:
         btns[number].config(text=str(answer))
 
@@ -92,7 +91,7 @@ def check():
     currentResults = history_results.cget("text")
     [goods, bads] = compteurs(masterword, response)
     results = f"{goods}\u2713 " if goods > 0 else ""
-    results += f"{bads}\u00D8 " if bads > 0 else ""
+    results += f"{bads}\u00d8 " if bads > 0 else ""
     results += f"{5 - bads - goods}\u2715 " if 5 - bads - goods > 0 else ""
     history_text.config(text=currentHist + " ".join(response) + f"\n")
     history_results.config(text=currentResults + results + f"\n")
@@ -100,15 +99,16 @@ def check():
         code = " ".join(masterword)
         shots = "coups" if nbPlayShot > 1 else "coup"
         showinfo(
-            "Bravo !", f"Bravo c'était bien {
-                code}\nTrouvé en {nbPlayShot} {shots}"
+            "Bravo !",
+            f"Bravo c'était bien {code}\nTrouvé en {nbPlayShot} {shots}",
         )
         reload()
 
 
 def reload():
-    global masterword, history_text, history_results
+    global masterword, history_text, history_results, nbPlayShot
     reloader.config(background="green", foreground="black")
+    nbPlayShot = 0
     history_text.config(text="")
     masterword = initMasterWord()
     history_results.config(text="")
@@ -151,6 +151,7 @@ def askAllNumbers(event):
             if tab[i] not in UNAUTHORIZED_CHAR:
                 btns[i].config(text=str(tab[i]))
         check()
+    window.after(200, askAllNumbers)
 
 
 LIMIT_HISTORIC = 40
@@ -168,7 +169,7 @@ window.bind("<Control-A>", askAllNumbers)
 window.bind("<Control-N>", newGameClick)
 window.bind("<Control-n>", newGameClick)
 window.bind("<Return>", verifierEvent)
-resourcePath = path('mastermind_tk.resources', 'icon-font.png')
+resourcePath = path("mastermind_tk.resources", "icon-font.png")
 with resourcePath as resource:
     iconFont = resource
 icon = PhotoImage(file=str(iconFont))
@@ -192,7 +193,7 @@ history_text = Label(history, background="darkred", text="")
 history_results = Label(history, background="orange", text="")
 quitter = Button(
     crossPanel,
-    text="\u2BBF Quitter",
+    text="\u2bbf Quitter",
     foreground="white",
     background="red",
     font=("JetBrains", 10, "bold"),
@@ -207,9 +208,8 @@ btns = []
 
 
 def main():
-    global btns, crossPanel, reloadPanel, reloader, panelHigh, history, history_label, history_results, \
-        history_text, quitter, panelNumbers, checker, iconFont
-    
+    global btns, crossPanel, reloadPanel, reloader, panelHigh, history, history_label, history_results, history_text, quitter, panelNumbers, checker, iconFont
+
     crossPanel.pack(side=RIGHT, padx=5, pady=5, anchor="ne")
     reloadPanel.pack(padx=5, pady=5, anchor="nw")
     reloader.pack()
@@ -256,17 +256,21 @@ def main():
     panelNumbers.config(background="black")
 
     bounds = getBoundsLegend()
-    legend = Text(window, wrap="word",
-                  width=bounds["width"], height=bounds["height"])
+    legend = Text(window, wrap="word", width=bounds["width"], height=bounds["height"])
     legend.pack(expand=False, side=BOTTOM, anchor="se")
     legend.insert(1.0, getLegend())
-    legend.config(state="disabled", background="black",
-                  foreground="white", borderwidth=0)
+    legend.config(
+        state="disabled", background="black", foreground="white", borderwidth=0
+    )
     legend.tag_add("title", 1.0, 1.9)
     legend.tag_configure(
-        "title", justify="center", foreground="blue", font=("JetBrains Mono", 12, "italic")
+        "title",
+        justify="center",
+        foreground="blue",
+        font=("JetBrains Mono", 12, "italic"),
     )
     window.mainloop()
+
 
 if __name__ == "main":
     main()
