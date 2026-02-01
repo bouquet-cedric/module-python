@@ -1,27 +1,23 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='mastermind_tk',
-    version='1.1.0',
-    requires=["tkinter", "PIL", "pillow"],
+    name="mastermind_tk",
+    version="1.2.2",
+    requires=["tkinter", "pillow", "functools", "random", "importlib", "getpass"],
     packages=find_packages(),
     entry_points={
-        'console_scripts': [
-            'mastermind=mastermind_tk.mastermind_tk:main'
-        ],
+        "console_scripts": ["mastermind=mastermind_tk.mastermind_tk:main"],
     },
     include_package_data=True,
-    package_data={
-        'mastermind_tk': ['resources/*']
-    },
-    author='Bouquet Cédric',
-    author_email='cedric-bouquet-7@outlook.fr',
+    package_data={"mastermind_tk": ["resources/*"]},
+    author="Bouquet Cédric",
+    author_email="cedric-bouquet-7@outlook.fr",
     description="Jeu du mastermind en version graphique",
     classifiers=[
-        'Programming Language :: Python :: 3',
+        "Programming Language :: Python :: 3",
     ],
     # long_description=open('README.md').read(),
     # long_description_content_type='text/markdown',
-    python_requires='>=3.0',
-    url='https://github.com/bouquet-cedric/module-python',
+    python_requires=">=3.0",
+    url="https://github.com/bouquet-cedric/module-python",
 )
