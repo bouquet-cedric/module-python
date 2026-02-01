@@ -14,6 +14,7 @@ from tkinter import (
 )
 from tkinter.messagebox import *
 from importlib.resources import path
+from sys import argv
 
 from PIL import Image, ImageTk
 
@@ -23,10 +24,21 @@ from getpass import getuser
 
 class MasterMind:
 
+    NB_NUMBER = 5
     LIMIT_HISTORIC = 40
     UNAUTHORIZED_CHAR = [None, "", " "]
 
-    def __init__(self):
+    def printHelp():
+        print(
+            """ [MASTERMIND-TK]
+        mastermind --help : affiche cette aide
+        mastermind --cases [NB_CASES] : joue au mastermind avec le nombre de valeurs voulues, par défaut 5.
+                                        La valeur doit être comprise entre 3 et 10 inclus.
+"""
+        )
+
+    def __init__(self, nb_cases=5):
+        MasterMind.NB_NUMBER = nb_cases
         self.window = Tk()
         self.window.title("MasterMind")
         self.window.geometry("1300x650")
@@ -115,12 +127,12 @@ class MasterMind:
         self.panelNumbers.pack()
         bg = ["lime", "darkred", "lightblue", "lightyellow", "orange"]
         fg = ["black", "white", "black", "black", "black"]
-        for i in range(5):
+        for i in range(MasterMind.NB_NUMBER):
             btn = Button(
                 self.panelNumbers,
                 text="?",
-                background=bg[i],
-                foreground=fg[i],
+                background=bg[i % 5],
+                foreground=fg[i % 5],
                 font=("JetBrains", 12, "bold"),
                 command=partial(self.asker, i),
             )
@@ -192,7 +204,7 @@ class MasterMind:
 
     def initMasterWord():
         mw = []
-        for _ in range(5):
+        for _ in range(MasterMind.NB_NUMBER):
             mw.append(str(randint(0, 9)))
         return mw
 
@@ -216,10 +228,15 @@ class MasterMind:
 
     def check(self: MasterMind):
         self.checker.config(background="orange", foreground="white")
-        self.nbPlayShot += 1
         response = []
         for i in self.btns:
-            response.append(i.cget("text"))
+            value = i.cget("text")
+            response.append(value)
+            if not str(value).isdigit():
+                break
+        if len(response) != MasterMind.NB_NUMBER:
+            return
+        self.nbPlayShot += 1
         self.manageHistoric(self.history_text)
         self.manageHistoric(self.history_results)
         currentHist = self.history_text.cget("text")
@@ -227,10 +244,14 @@ class MasterMind:
         [goods, bads] = MasterMind.compteurs(self.masterword, response)
         results = f"{goods}\u2713 " if goods > 0 else ""
         results += f"{bads}\u00d8 " if bads > 0 else ""
-        results += f"{5 - bads - goods}\u2715 " if 5 - bads - goods > 0 else ""
+        results += (
+            f"{MasterMind.NB_NUMBER - bads - goods}\u2715 "
+            if MasterMind.NB_NUMBER - bads - goods > 0
+            else ""
+        )
         self.history_text.config(text=currentHist + " ".join(response) + f"\n")
         self.history_results.config(text=currentResults + results + f"\n")
-        if goods == 5:
+        if goods == MasterMind.NB_NUMBER:
             code = " ".join(self.masterword)
             shots = "coups" if self.nbPlayShot > 1 else "coup"
             showinfo(
@@ -272,15 +293,22 @@ class MasterMind:
         self.window.quit()
 
     def askAllNumbers(self: MasterMind, event):
+        phrasesFullN = " ".join(["n" for _ in range(MasterMind.NB_NUMBER)])
         answer = simpledialog.askstring(
-            "Saisie", "Suite:\nFormat : 'n n n n n'", parent=self.window
+            "Saisie", f"Suite:\nFormat : '{phrasesFullN}'", parent=self.window
         )
         if answer != None and answer != "":
             tab = answer.split(" ")
+            nbSaisies = 0
             for i in range(len(tab)):
                 if tab[i] not in self.UNAUTHORIZED_CHAR:
                     self.btns[i].config(text=str(tab[i]))
-            self.check()
+                    nbSaisies += 1
+            if nbSaisies != MasterMind.NB_NUMBER:
+                for btn in self.btns:
+                    btn.config(text="")
+            else:
+                self.check()
             self.window.after(1000, lambda: self.askAllNumbers(None))
 
     def play(self):
@@ -288,8 +316,27 @@ class MasterMind:
 
 
 def main():
-    window = MasterMind()
-    window.play()
+    try:
+        nbArgs = len(argv)
+        defaultCases = MasterMind.NB_NUMBER
+        canPlay = True
+        for index in range(nbArgs):
+            item = argv[index]
+            if item == "--help":
+                MasterMind.printHelp()
+                canPlay = False
+            elif item == "--cases" and index + 1 < nbArgs:
+                defaultCases = int(argv[index + 1])
+                if not (defaultCases >= 3 and defaultCases <= 10):
+                    raise Exception(
+                        f"Impossible d'affecter {defaultCases} valeurs, le nombre doit être compris entre 3 et 10 inclus"
+                    )
+
+        if canPlay:
+            window = MasterMind(defaultCases)
+            window.play()
+    except Exception as e:
+        print('\033[31m',e.args[0],"\033[0m")
 
 
 if __name__ == "main":

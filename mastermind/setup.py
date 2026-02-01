@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="mastermind_tk",
-    version="1.2.2",
+    version="1.3.2",
     requires=["tkinter", "pillow", "functools", "random", "importlib", "getpass"],
     packages=find_packages(),
     entry_points={
